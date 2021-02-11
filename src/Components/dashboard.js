@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from "react"
+import { Link } from "react-router-dom"
 
 const dashboard = () => {
   return (
@@ -9,7 +9,7 @@ const dashboard = () => {
         <Link to="/Signin"> sign out</Link>
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default dashboard;
+export default dashboard

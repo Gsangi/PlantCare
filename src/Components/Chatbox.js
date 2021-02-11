@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 
 function Chatbox() {
-  const [message, setmessage] = useState("");
+  const [message, setmessage] = useState("")
 
-//   const onclickhandler = () => {
-      
-//   };
+  //   const onclickhandler = () => {
+
+  //   };
 
   const inputhandler = (event) => {
-    const inputText = event.target.value;
-    setmessage(inputText);
+    const inputText = event.target.value
+    setmessage(inputText)
   }
 
   return (
@@ -22,7 +22,7 @@ function Chatbox() {
       <input type="text" name="" onChange={inputhandler} id="" />
       <button onClick={() => setmessage("")}>Submit</button>
     </div>
-  );
+  )
 }
 
-export default Chatbox;
+export default Chatbox
