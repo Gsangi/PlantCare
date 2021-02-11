@@ -1,0 +1,49 @@
+.wholepage {
+  display: flex;
+}
+
+.section {
+}
+
+.upperleft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+
+  img {
+    position: absolute;
+    left: 0;
+    height: 50%;
+  }
+
+  .up {
+    top: 0;
+  }
+  .down {
+    bottom: 0;
+    z-index: 50;
+  }
+}
+
+.upperright {
+  flex: 1;
+  position: relative;
+  img {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+}
+
+.middle {
+  z-index: 100;
+  flex: 2;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  padding: 0rem 20rem;
+}
