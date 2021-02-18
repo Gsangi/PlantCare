@@ -1,20 +1,39 @@
-import React from "react"
-import Signin from "./Components/Signin"
-import dashboard from "./Components/dashboard.js"
-import Chatbox from "./Components/Chatbox"
-import "./Styles/app.scss"
+import React, { useContext } from "react"
+import Signin from "./Screen/Signin"
+import Home from "./Screen/Home"
 import {
   BrowserRouter as Router,
   Route,
   Switch,
+  Redirect,
 } from "react-router-dom"
+import {
+  Context as AuthContext,
+  Provider as AuthProvider,
+} from "./Context/AuthContext"
+
+console.log("App.js")
 
 function App() {
+  const { state } = useContext(AuthContext)
+  console.log("App.js: ", state)
   return (
-    <div className="App">
-      <Chatbox />
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/">
+          {state.idToken ? <Home /> : <Redirect to="/signin" />}
+        </Route>
+        <Route path="/signin">
+          <Signin />
+        </Route>
+      </Switch>
+    </Router>
   )
 }
 
-export default App
+// eslint-disable-next-line react/display-name
+export default () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+)
