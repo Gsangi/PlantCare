@@ -41,7 +41,7 @@ const SignIn = (dispatch) => async (username, password) => {
   }
 }
 
-const SignOut = (dispatch) => async (username) => {
+const SignOut = (dispatch) => (username) => {
   SignOutAuth(username)
   dispatch({
     type: "sign-out",

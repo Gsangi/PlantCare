@@ -1,9 +1,10 @@
 import React, { useContext } from "react"
-import { Box, Typography, Drawer, Button } from "@material-ui/core"
-import {
-  Settings as SettingsIcon,
-  Eco as EcoIcon,
-} from "@material-ui/icons"
+import Box from "@material-ui/core/Box"
+import Typography from "@material-ui/core/Typography"
+import Drawer from "@material-ui/core/Drawer"
+import Button from "@material-ui/core/Button"
+import SettingsIcon from "@material-ui/icons/Settings"
+import EcoIcon from "@material-ui/icons/Eco"
 import {
   makeStyles,
   createMuiTheme,

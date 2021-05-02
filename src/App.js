@@ -11,29 +11,22 @@ import {
   Context as AuthContext,
   Provider as AuthProvider,
 } from "./Context/AuthContext"
+import ChatBox from "./Components/ChatBox"
 
-console.log("App.js")
-
-function App() {
-  const { state } = useContext(AuthContext)
-  console.log("App.js: ", state)
+export default function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          {state.idToken ? <Home /> : <Redirect to="/signin" />}
-        </Route>
-        <Route path="/signin">
-          <Signin />
-        </Route>
-      </Switch>
-    </Router>
+    <AuthProvider>
+      <ChatBox />
+      {/*<Router>*/}
+      {/*  <Switch>*/}
+      {/*    <Route exact path="/">*/}
+      {/*      {state.idToken ? <Home /> : <Redirect to="/signin" />}*/}
+      {/*    </Route>*/}
+      {/*    <Route path="/signin">*/}
+      {/*      <Signin />*/}
+      {/*    </Route>*/}
+      {/*  </Switch>*/}
+      {/*</Router>*/}
+    </AuthProvider>
   )
 }
-
-// eslint-disable-next-line react/display-name
-export default () => (
-  <AuthProvider>
-    <App />
-  </AuthProvider>
-)
