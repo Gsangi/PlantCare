@@ -36,6 +36,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     height: "inherit",
   },
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+  },
 }))
 
 export default function MainNavigation({ children }) {
@@ -45,12 +50,12 @@ export default function MainNavigation({ children }) {
   return (
     <div className={classes.root}>
       <Drawer
-        variant="permanent"
         className={classes.drawer}
+        variant="permanent"
         classes={{
           paper: classes.drawerPaper,
         }}
-        color="primary"
+        anchor="left"
       >
         <div className={classes.toolbar}>
           <EcoIcon fontSize="large" color="primary" />
@@ -64,7 +69,7 @@ export default function MainNavigation({ children }) {
           </ListItem>
         </List>
       </Drawer>
-      {children}
+      <main className={classes.content}>{children}</main>
     </div>
   )
 }

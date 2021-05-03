@@ -11,43 +11,41 @@ import SendIcon from "@material-ui/icons/Send"
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    margin: "30px 80px",
-    padding: "10px 8px",
-    width: 400,
+    padding: theme.spacing(1),
     height: 600,
-    backgroundColor: "#dfdfdf",
+    backgroundColor: "#dfdfdf"
   },
   messageMe: {
     backgroundColor: "white",
     padding: theme.spacing(1),
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   messageSender: {
     backgroundColor: "#FCEF87",
     padding: theme.spacing(1),
     margin: theme.spacing(1),
-    marginRight: "50px",
+    marginRight: "50px"
   },
   sendMessageBox: {
     display: "flex",
     alignItems: "center",
     alignSelf: "flex-end",
-    width: "100%",
+    width: "100%"
   },
   messageContainer: {
-    backgroundColor: "inherit",
+    backgroundColor: "inherit"
   },
   input: {
     marginLeft: theme.spacing(1),
-    flex: 1,
+    flex: 1
   },
   iconButton: {
-    padding: 10,
+    padding: 10
   },
   divider: {
     height: 28,
-    margin: 4,
-  },
+    margin: 4
+  }
 }))
 
 class Message {

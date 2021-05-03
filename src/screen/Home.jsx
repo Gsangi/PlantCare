@@ -1,9 +1,8 @@
 import React, { useContext } from "react"
 import { Link } from "react-router-dom"
 import Box from "@material-ui/core/Box"
+import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
-import ChatBox from "../components/ChatBox"
-import MainNavigation from "../navigations/MainNavigation"
 import Drawer from "@material-ui/core/Drawer"
 import Divider from "@material-ui/core/Divider"
 import List from "@material-ui/core/List"
@@ -12,6 +11,9 @@ import ListItemIcon from "@material-ui/core/ListItem"
 import ListItemText from "@material-ui/core/ListItemText"
 import EcoIcon from "@material-ui/icons/Eco"
 import HomeIcon from "@material-ui/icons/Home"
+import ChatBox from "../components/ChatBox"
+import MainNavigation from "../navigations/MainNavigation"
+import UsersList from "../components/UsersList"
 
 const drawerWidth = 240
 
@@ -46,28 +48,15 @@ function Home() {
 
   return (
     <MainNavigation>
-      <Drawer
-        variant="permanent"
-        className={classes.drawer}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        color="primary"
-      >
-        <div className={classes.toolbar}>
-          <EcoIcon fontSize="large" color="primary" />
-        </div>
-        <Divider />
-        <List>
-          <ListItem button component={Link} to="/">
-            <ListItemIcon>
-              <HomeIcon color={location.pathname === "/" ? "secondary" : "action"} />
-            </ListItemIcon>
-            <ListItemText primary={"hola"} />
-          </ListItem>
-        </List>
-      </Drawer>
-      <ChatBox />
+      <Grid container>
+        <Grid id="users-list" item xs={12} sm={4}>
+          <UsersList />
+        </Grid>
+        <Grid id="chat-box" item xs={12} sm={4}>
+          <ChatBox />
+        </Grid>
+        <Grid id="info-box" item xs={12} sm={4}></Grid>
+      </Grid>
     </MainNavigation>
   )
 }
