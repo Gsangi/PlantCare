@@ -120,10 +120,7 @@ function ChatBox() {
           >
             <InsertEmoticonIcon />
           </IconButton>
-          <Divider
-            className={classes.divider}
-            orientation="vertical"
-          />
+          <Divider className={classes.divider} orientation="vertical" />
           <InputBase
             className={classes.input}
             placeholder="Send Message"
@@ -133,10 +130,7 @@ function ChatBox() {
               setInputText(v.target.value)
             }}
           />
-          <Divider
-            className={classes.divider}
-            orientation="vertical"
-          />
+          <Divider className={classes.divider} orientation="vertical" />
           <IconButton
             color="primary"
             className={classes.iconButton}

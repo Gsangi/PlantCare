@@ -1,18 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
-import {
-  Box,
-  Button,
-  Typography,
-  TextField,
-  CircularProgress,
-  Tooltip,
-} from "@material-ui/core"
+import { Box, Button, Typography, TextField, CircularProgress, Tooltip } from "@material-ui/core"
 import { Alert } from "@material-ui/lab"
 import { ThemeProvider } from "@material-ui/core/styles"
 import { Redirect } from "react-router-dom"
-import { Context as AuthContext } from "../Context/AuthContext"
-import "../Styles/_Signin.scss"
-import { useStyles, theme, titleTheme } from "../Styles/SignInStyles"
+import { Context as AuthContext } from "../context/AuthContext"
+import "../styles/_Signin.scss"
+import { useStyles, theme, titleTheme } from "../styles/SignInStyles"
 
 const Signin = () => {
   const classes = useStyles()
@@ -66,11 +59,7 @@ const Signin = () => {
       <ThemeProvider theme={theme}>
         <Box display="flex" className="upperleft section">
           <img className="up" src="./img/Path 65.png" alt="" />
-          <img
-            className="down"
-            src="./img/animatedsignin.svg"
-            alt=""
-          />
+          <img className="down" src="./img/animatedsignin.svg" alt="" />
         </Box>
         <Box className="middle section" color="text.primary">
           <ThemeProvider theme={titleTheme}>
@@ -88,12 +77,7 @@ const Signin = () => {
               onChange={emailHandler}
             />
           ) : (
-            <TextField
-              autoFocus
-              label="Username"
-              variant="outlined"
-              onChange={emailHandler}
-            />
+            <TextField autoFocus label="Username" variant="outlined" onChange={emailHandler} />
           )}
           <br />
           {emptyPass ? (
@@ -106,12 +90,7 @@ const Signin = () => {
               onChange={passHandler}
             />
           ) : (
-            <TextField
-              type="password"
-              label="Password"
-              variant="outlined"
-              onChange={passHandler}
-            />
+            <TextField type="password" label="Password" variant="outlined" onChange={passHandler} />
           )}
           <br />
           <Tooltip
@@ -121,11 +100,7 @@ const Signin = () => {
             // leaveDelay={200}
           >
             <ThemeProvider theme={theme}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                position="relative"
-              >
+              <Box display="flex" flexDirection="column" position="relative">
                 <Button
                   type="submit"
                   variant="contained"
@@ -137,17 +112,10 @@ const Signin = () => {
                   Sign in
                 </Button>
                 {signInProgress && (
-                  <CircularProgress
-                    size={24}
-                    className={classes.buttonProgress}
-                  />
+                  <CircularProgress size={24} className={classes.buttonProgress} />
                 )}
                 {state.code && (
-                  <Alert
-                    severity="error"
-                    variant="standard"
-                    className={classes.alertDialog}
-                  >
+                  <Alert severity="error" variant="standard" className={classes.alertDialog}>
                     Incorrect Username or Password
                   </Alert>
                 )}

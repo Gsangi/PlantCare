@@ -1,5 +1,5 @@
 import CreateContext from "./Context"
-import { SignInAuth, SignOutAuth } from "../Modules/AwsCogitoAuth"
+import { SignInAuth, SignOutAuth } from "../modules/AwsCogitoAuth"
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -49,8 +49,4 @@ const SignOut = (dispatch) => (username) => {
   })
 }
 
-export const { Context, Provider } = CreateContext(
-  reducer,
-  { SignIn, SignOut },
-  {}
-)
+export const { Context, Provider } = CreateContext(reducer, { SignIn, SignOut }, {})

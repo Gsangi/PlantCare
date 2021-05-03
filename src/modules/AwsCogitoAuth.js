@@ -1,8 +1,4 @@
-import {
-  CognitoUserPool,
-  AuthenticationDetails,
-  CognitoUser,
-} from "amazon-cognito-identity-js"
+import { CognitoUserPool, AuthenticationDetails, CognitoUser } from "amazon-cognito-identity-js"
 
 var poolData = {
   UserPoolId: "ap-south-1_mhtZ1HM2Y",
@@ -27,11 +23,7 @@ const SignInAuth = (username, pass) => {
       onFailure: reject,
       newPasswordRequired(userAttributes) {
         console.log(userAttributes)
-        cognitoUser.completeNewPasswordChallenge(
-          pass,
-          userAttributes,
-          this
-        )
+        cognitoUser.completeNewPasswordChallenge(pass, userAttributes, this)
       },
     })
   })
