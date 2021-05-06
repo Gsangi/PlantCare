@@ -1,6 +1,6 @@
 import React from "react"
 import { useLocation, Link } from "react-router-dom"
-import Box from "@material-ui/core/Box"
+import Paper from "@material-ui/core/Paper"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemIcon from "@material-ui/core/ListItem"
@@ -10,7 +10,7 @@ import EcoIcon from "@material-ui/icons/Eco"
 import HomeIcon from "@material-ui/icons/Home"
 import { makeStyles } from "@material-ui/core/styles"
 
-const drawerWidth = "auto"
+const drawerWidth = 80
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+  },
+  drawerItem: {
+    justifyContent: "center",
   },
   toolbar: {
     display: "flex",
@@ -38,8 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    backgroundColor: theme.palette.background.paper,
   },
 }))
 
@@ -63,7 +65,7 @@ export default function MainNavigation({ children }) {
         <Divider />
         <List>
           <ListItem button component={Link} to="/">
-            <ListItemIcon>
+            <ListItemIcon className={classes.drawerItem}>
               <HomeIcon color={location.pathname === "/" ? "secondary" : "action"} />
             </ListItemIcon>
           </ListItem>

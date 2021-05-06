@@ -1,19 +1,11 @@
-import React, { useContext } from "react"
-import { Link } from "react-router-dom"
-import Box from "@material-ui/core/Box"
+import React, { useContext, useState } from "react"
 import Grid from "@material-ui/core/Grid"
 import { makeStyles } from "@material-ui/core/styles"
-import Drawer from "@material-ui/core/Drawer"
 import Divider from "@material-ui/core/Divider"
-import List from "@material-ui/core/List"
-import ListItem from "@material-ui/core/ListItem"
-import ListItemIcon from "@material-ui/core/ListItem"
-import ListItemText from "@material-ui/core/ListItemText"
-import EcoIcon from "@material-ui/icons/Eco"
-import HomeIcon from "@material-ui/icons/Home"
 import ChatBox from "../components/ChatBox"
 import MainNavigation from "../navigations/MainNavigation"
 import UsersList from "../components/UsersList"
+import UserInfo from "../components/UserInfo"
 
 const drawerWidth = 240
 
@@ -45,17 +37,20 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
   const classes = useStyles()
+  const [showUserInfo, setShowUserInfo] = useState(false)
 
   return (
     <MainNavigation>
       <Grid container>
-        <Grid id="users-list" item xs={12} sm={4}>
+        <Grid id="users-list" item xs={12} sm={3}>
           <UsersList />
         </Grid>
-        <Grid id="chat-box" item xs={12} sm={4}>
+        <Grid id="chat-box" item xs={12} sm={6}>
           <ChatBox />
         </Grid>
-        <Grid id="info-box" item xs={12} sm={4}></Grid>
+        <Grid id="info-box" item xs={12} sm={3}>
+          <UserInfo />
+        </Grid>
       </Grid>
     </MainNavigation>
   )

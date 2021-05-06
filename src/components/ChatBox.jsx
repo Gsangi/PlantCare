@@ -2,50 +2,70 @@ import React, { useState } from "react"
 import Paper from "@material-ui/core/Paper"
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon"
 import Typography from "@material-ui/core/Typography"
-import IconButton from "@material-ui/core/IconButton"
 import InputBase from "@material-ui/core/InputBase"
+import AppBar from "@material-ui/core/AppBar"
+import Toolbar from "@material-ui/core/Toolbar"
+import Button from "@material-ui/core/Button"
+import IconButton from "@material-ui/core/IconButton"
+import MenuIcon from "@material-ui/icons/Menu"
 import Grid from "@material-ui/core/Grid"
 import Divider from "@material-ui/core/Divider"
 import { makeStyles } from "@material-ui/core/styles"
 import SendIcon from "@material-ui/icons/Send"
+import Avatar from "@material-ui/core/Avatar"
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+  },
+  chat: {
     padding: theme.spacing(1),
-    height: 600,
-    backgroundColor: "#dfdfdf"
+    backgroundColor: theme.palette.background.default,
+    flex: 1,
+    position: "relative",
+    overflow: "auto",
   },
   messageMe: {
     backgroundColor: "white",
     padding: theme.spacing(1),
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   messageSender: {
     backgroundColor: "#FCEF87",
     padding: theme.spacing(1),
     margin: theme.spacing(1),
-    marginRight: "50px"
+    marginRight: "50px",
   },
   sendMessageBox: {
     display: "flex",
+    padding: theme.spacing(0.5),
     alignItems: "center",
-    alignSelf: "flex-end",
-    width: "100%"
+    bottom: 0,
+    left: 0,
+    right: 0,
+    position: "absolute",
+    margin: theme.spacing(1),
   },
   messageContainer: {
-    backgroundColor: "inherit"
+    height: "auto",
+    backgroundColor: "inherit",
   },
   input: {
     marginLeft: theme.spacing(1),
-    flex: 1
+    flex: 1,
   },
   iconButton: {
-    padding: 10
+    padding: 10,
   },
   divider: {
     height: 28,
-    margin: 4
-  }
+    margin: 4,
+  },
+  title: {
+    flexGrow: 1,
+  },
 }))
 
 class Message {
@@ -77,39 +97,44 @@ function ChatBox() {
   }
 
   return (
-    <Paper
-      className={classes.root}
-      component={Grid}
-      container
-      direction="column"
-      justify="space-between"
-    >
-      <Grid
-        item
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton edge="start" color="inherit" aria-label="menu">
+            <Avatar>U</Avatar>
+          </IconButton>
+          <Typography variant="h6" className={classes.title}>
+            User
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Paper
+        elevation={0}
+        square
+        className={classes.chat}
+        component={Grid}
         container
         direction="column"
-        component={Paper}
-        elevation={0}
-        className={classes.messageContainer}
+        justify="space-between"
       >
-        {[...messages].map((m) =>
-          m.me ? (
-            <Grid item container justify="flex-end">
-              <Paper elevation={0} className={classes.messageMe}>
-                <Typography>{m.msg}</Typography>
-              </Paper>
-            </Grid>
-          ) : (
-            <Grid item container justify="flex-end">
-              <Paper elevation={0} className={classes.messageSender}>
-                <Typography>{m.msg}</Typography>
-              </Paper>
-            </Grid>
-          )
-        )}
-      </Grid>
-      <Grid item>
-        <Paper component="form" className={classes.sendMessageBox}>
+        <Grid item container direction="column-reverse" className={classes.messageContainer}>
+          {[...messages].map((m) =>
+            m.me ? (
+              <Grid item container justify="flex-end">
+                <Paper elevation={0} className={classes.messageMe}>
+                  <Typography>{m.msg}</Typography>
+                </Paper>
+              </Grid>
+            ) : (
+              <Grid item container justify="flex-start">
+                <Paper elevation={0} className={classes.messageSender}>
+                  <Typography>{m.msg}</Typography>
+                </Paper>
+              </Grid>
+            )
+          )}
+        </Grid>
+        <Paper variant="outlined" component="form" className={classes.sendMessageBox}>
           <IconButton
             color="primary"
             type="button"
@@ -138,8 +163,8 @@ function ChatBox() {
             <SendIcon />
           </IconButton>
         </Paper>
-      </Grid>
-    </Paper>
+      </Paper>
+    </div>
   )
 }
 
