@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import Paper from "@material-ui/core/Paper"
 import List from "@material-ui/core/List"
@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UsersList() {
   const classes = useStyles()
+  const [selectUser, setSelectUser] = useState()
+
+  const handleSelectUser = (e, index) => {
+    setSelectUser(index)
+  }
 
   return (
     <div className={classes.root}>
@@ -51,7 +56,15 @@ export default function UsersList() {
         <Grid item xs={12}>
           <List>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((e) => (
-              <ListItem button key={e}>
+              <ListItem
+                button
+                key={e}
+                value={e}
+                selected={e === selectUser}
+                onClick={(event) => {
+                  handleSelectUser(event, e)
+                }}
+              >
                 <ListItemAvatar>
                   <Avatar>{e}</Avatar>
                 </ListItemAvatar>
