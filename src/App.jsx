@@ -1,7 +1,9 @@
-import React, { useContext } from "react"
+import React from "react"
 import { BrowserRouter as Router } from "react-router-dom"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 import { Provider as AuthProvider } from "./context/AuthContext"
+import { Provider as UserProvider } from "./context/UsersContext"
+import { Provider as MessageProvider } from "./context/MessagesContext"
 import PrivateRoute from "./routes/PrivateRoute"
 import Home from "./screen/Home"
 
@@ -30,10 +32,14 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <CssBaseline />
-        <ThemeProvider theme={theme}>
-          <PrivateRoute exact path="/" component={Home} />
-        </ThemeProvider>
+        <UserProvider>
+          <MessageProvider>
+            <CssBaseline />
+            <ThemeProvider theme={theme}>
+              <PrivateRoute exact path="/" component={Home} />
+            </ThemeProvider>
+          </MessageProvider>
+        </UserProvider>
       </AuthProvider>
     </Router>
   )

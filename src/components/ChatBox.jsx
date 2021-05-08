@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import moment from "moment"
 import Paper from "@material-ui/core/Paper"
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon"
 import Typography from "@material-ui/core/Typography"
@@ -13,44 +14,28 @@ import Divider from "@material-ui/core/Divider"
 import { makeStyles } from "@material-ui/core/styles"
 import SendIcon from "@material-ui/icons/Send"
 import Avatar from "@material-ui/core/Avatar"
+import MessageBox from "./MessageBox"
+import Message from "../model/Message"
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
     display: "flex",
     flexDirection: "column",
+    backgroundColor: theme.palette.background.default,
   },
   chat: {
     padding: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
-    flex: 1,
-    position: "relative",
-    overflow: "auto",
-  },
-  messageMe: {
-    backgroundColor: "white",
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-  },
-  messageSender: {
-    backgroundColor: "#FCEF87",
-    padding: theme.spacing(1),
-    margin: theme.spacing(1),
-    marginRight: "50px",
+    flex: "1 1 auto",
+    minHeight: "0px",
+    overflowY: "auto",
   },
   sendMessageBox: {
     display: "flex",
     padding: theme.spacing(0.5),
     alignItems: "center",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    position: "absolute",
     margin: theme.spacing(1),
-  },
-  messageContainer: {
-    height: "auto",
-    backgroundColor: "inherit",
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -68,32 +53,32 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-class Message {
-  constructor(msg, time, me) {
-    this.msg = msg
-    this.time = time
-    this.me = me
-  }
-}
-
 function ChatBox() {
   const classes = useStyles()
 
   const [messages, setMessages] = useState([])
   const [inputText, setInputText] = useState("")
+  let newMessageRef = useRef()
+
+  useEffect(() => {
+    if (newMessageRef) newMessageRef.scrollIntoView({ behavior: "auto" })
+  }, [messages])
 
   const handleSendMessage = (event) => {
     event.preventDefault()
     if (!inputText) return
-    console.log(inputText)
-    const date = new Date()
-    let msg = new Message(inputText, date, true)
+    const date = moment()
+    let msg = new Message(0, inputText, date, "me")
+    console.log(msg)
     setInputText("")
     setMessages([...messages, msg])
   }
 
   const handleOpenEmoticons = () => {
     console.log("Open Emoticon!")
+    const date = moment()
+    let msg = new Message(0, "Sample User msg", date, "user")
+    setMessages([...messages, msg])
   }
 
   return (
@@ -108,61 +93,49 @@ function ChatBox() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Paper
-        elevation={0}
-        square
-        className={classes.chat}
-        component={Grid}
-        container
-        direction="column"
-        justify="space-between"
-      >
-        <Grid item container direction="column-reverse" className={classes.messageContainer}>
-          {[...messages].map((m) =>
-            m.me ? (
-              <Grid item container justify="flex-end">
-                <Paper elevation={0} className={classes.messageMe}>
-                  <Typography>{m.msg}</Typography>
-                </Paper>
-              </Grid>
-            ) : (
-              <Grid item container justify="flex-start">
-                <Paper elevation={0} className={classes.messageSender}>
-                  <Typography>{m.msg}</Typography>
-                </Paper>
-              </Grid>
-            )
-          )}
-        </Grid>
-        <Paper variant="outlined" component="form" className={classes.sendMessageBox}>
-          <IconButton
-            color="primary"
-            type="button"
-            className={classes.iconButton}
-            onClick={handleOpenEmoticons}
-          >
-            <InsertEmoticonIcon />
-          </IconButton>
-          <Divider className={classes.divider} orientation="vertical" />
-          <InputBase
-            className={classes.input}
-            placeholder="Send Message"
-            inputProps={{ "aria-label": "send message" }}
-            value={inputText}
-            onChange={(v) => {
-              setInputText(v.target.value)
+      <Paper elevation={0} square className={classes.chat} component={Grid} container>
+        <Grid item container direction="column" justify="flex-end" wrap="nowrap">
+          {[...messages].map((message, index) => (
+            <MessageBox key={index} message={message} />
+          ))}
+          <div
+            style={{ float: "left", clear: "both" }}
+            ref={(el) => {
+              newMessageRef = el
             }}
           />
-          <Divider className={classes.divider} orientation="vertical" />
-          <IconButton
-            color="primary"
-            className={classes.iconButton}
-            onClick={handleSendMessage}
-            type="submit"
-          >
-            <SendIcon />
-          </IconButton>
-        </Paper>
+        </Grid>
+      </Paper>
+      <Paper variant="outlined" component="form" className={classes.sendMessageBox}>
+        <IconButton
+          color="primary"
+          type="button"
+          className={classes.iconButton}
+          onClick={handleOpenEmoticons}
+        >
+          <InsertEmoticonIcon />
+        </IconButton>
+        <Divider className={classes.divider} orientation="vertical" />
+        <InputBase
+          className={classes.input}
+          placeholder="Send Message"
+          inputProps={{ "aria-label": "send message" }}
+          value={inputText}
+          onChange={(v) => {
+            setInputText(v.target.value)
+          }}
+          multiline
+          rowsMax={4}
+        />
+        <Divider className={classes.divider} orientation="vertical" />
+        <IconButton
+          color="primary"
+          className={classes.iconButton}
+          onClick={handleSendMessage}
+          type="submit"
+        >
+          <SendIcon />
+        </IconButton>
       </Paper>
     </div>
   )

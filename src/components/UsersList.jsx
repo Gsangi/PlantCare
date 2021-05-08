@@ -1,6 +1,5 @@
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { makeStyles } from "@material-ui/core/styles"
-import Paper from "@material-ui/core/Paper"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
 import ListItemAvatar from "@material-ui/core/ListItemAvatar"
@@ -9,6 +8,16 @@ import Avatar from "@material-ui/core/Avatar"
 import Grid from "@material-ui/core/Grid"
 import Typography from "@material-ui/core/Typography"
 import Divider from "@material-ui/core/Divider"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
+import AddIcon from "@material-ui/icons/Add"
+import Dialog from "@material-ui/core/Dialog"
+import DialogTitle from "@material-ui/core/DialogTitle"
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/DialogActions"
+import DialogContentText from "@material-ui/core/DialogContentText"
+import TextField from "@material-ui/core/TextField"
+import InputAdornment from "@material-ui/core/InputAdornment"
+import Button from "@material-ui/core/Button"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,9 +40,24 @@ const useStyles = makeStyles((theme) => ({
 export default function UsersList() {
   const classes = useStyles()
   const [selectUser, setSelectUser] = useState()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const phoneRef = useRef()
 
   const handleSelectUser = (e, index) => {
     setSelectUser(index)
+  }
+
+  const handleAddNewUser = () => {
+    setDialogOpen(false)
+    console.log("ADD new user")
+  }
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true)
+  }
+
+  const handleDialogClose = () => {
+    setDialogOpen(false)
   }
 
   return (
@@ -55,7 +79,7 @@ export default function UsersList() {
         <Divider />
         <Grid item xs={12}>
           <List>
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((e) => (
+            {[1, 2, 3, 4, 5].map((e) => (
               <ListItem
                 button
                 key={e}
@@ -71,9 +95,46 @@ export default function UsersList() {
                 <ListItemText primary={e} />
               </ListItem>
             ))}
+            <Divider />
+            <ListItem button onClick={handleDialogOpen}>
+              <ListItemIcon>
+                <AddIcon />
+              </ListItemIcon>
+              <ListItemText primary="Add  Customer" />
+            </ListItem>
           </List>
         </Grid>
       </Grid>
+      <Dialog open={dialogOpen} onClose={handleDialogClose} aria-labelledby="enter-phone-dialog">
+        <DialogTitle id="enter-number-dialog">Add customer</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To add customer and start chat. Please enter customer phone.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            label="Phone"
+            margin="dense"
+            id="phone"
+            type="tel"
+            pattern="[0-9]{3} [0-9]{3} [0-9]{4}"
+            maxlength="12"
+            fullWidth
+            inputRef={phoneRef}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleAddNewUser} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }
