@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useRef, useState, useContext, useEffect } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -18,6 +18,8 @@ import DialogContentText from "@material-ui/core/DialogContentText"
 import TextField from "@material-ui/core/TextField"
 import InputAdornment from "@material-ui/core/InputAdornment"
 import Button from "@material-ui/core/Button"
+import Snackbar from "@material-ui/core/Snackbar"
+import { Context as UserContext } from "../context/UsersContext"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,9 +41,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UsersList() {
   const classes = useStyles()
+  const { state: usersState, addUser } = useContext(UserContext)
   const [selectUser, setSelectUser] = useState()
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const phoneRef = useRef()
+
+  useEffect(() => {
+    setSnackbarOpen(!!usersState.notFound)
+  }, [usersState])
 
   const handleSelectUser = (e, index) => {
     setSelectUser(index)
@@ -49,7 +57,7 @@ export default function UsersList() {
 
   const handleAddNewUser = () => {
     setDialogOpen(false)
-    console.log("ADD new user")
+    addUser(phoneRef.current.value)
   }
 
   const handleDialogOpen = () => {
@@ -58,6 +66,14 @@ export default function UsersList() {
 
   const handleDialogClose = () => {
     setDialogOpen(false)
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return
+    }
+
+    setSnackbarOpen(false)
   }
 
   return (
@@ -79,20 +95,20 @@ export default function UsersList() {
         <Divider />
         <Grid item xs={12}>
           <List>
-            {[1, 2, 3, 4, 5].map((e) => (
+            {usersState.users.map((e) => (
               <ListItem
                 button
-                key={e}
-                value={e}
-                selected={e === selectUser}
+                key={e.phone}
+                value={e.phone}
+                selected={e.phone === selectUser}
                 onClick={(event) => {
                   handleSelectUser(event, e)
                 }}
               >
                 <ListItemAvatar>
-                  <Avatar>{e}</Avatar>
+                  <Avatar>{e.name[0]}</Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={e} />
+                <ListItemText primary={e.name} />
               </ListItem>
             ))}
             <Divider />
@@ -118,7 +134,7 @@ export default function UsersList() {
             id="phone"
             type="tel"
             pattern="[0-9]{3} [0-9]{3} [0-9]{4}"
-            maxlength="12"
+            maxLength="12"
             fullWidth
             inputRef={phoneRef}
             InputProps={{
@@ -135,6 +151,16 @@ export default function UsersList() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={`${usersState.notFound} not found`}
+      />
     </div>
   )
 }
