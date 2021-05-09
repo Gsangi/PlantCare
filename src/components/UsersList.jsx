@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext, useEffect } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import { makeStyles } from "@material-ui/core/styles"
 import List from "@material-ui/core/List"
 import ListItem from "@material-ui/core/ListItem"
@@ -17,9 +17,13 @@ import DialogActions from "@material-ui/core/DialogActions"
 import DialogContentText from "@material-ui/core/DialogContentText"
 import TextField from "@material-ui/core/TextField"
 import InputAdornment from "@material-ui/core/InputAdornment"
+import Skeleton from "@material-ui/lab/Skeleton"
+import IconButton from "@material-ui/core/IconButton"
 import Button from "@material-ui/core/Button"
 import Snackbar from "@material-ui/core/Snackbar"
-import { Context as UserContext } from "../context/UsersContext"
+import CloseIcon from "@material-ui/icons/Close"
+import { useUsers } from "../context/UsersContext"
+import { useMessages } from "../context/MessagesContext"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,23 +45,32 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UsersList() {
   const classes = useStyles()
-  const { state: usersState, addUser } = useContext(UserContext)
-  const [selectUser, setSelectUser] = useState()
+  const { users, notFound, addUser } = useUsers()
+  const { user: selectUser, selectUser: setSelectUser } = useMessages()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const phoneRef = useRef()
 
   useEffect(() => {
-    setSnackbarOpen(!!usersState.notFound)
-  }, [usersState])
+    setSnackbarOpen(!!notFound)
+  }, [notFound])
 
-  const handleSelectUser = (e, index) => {
-    setSelectUser(index)
+  const handleSelectUser = (e, user) => {
+    setSelectUser(user)
   }
 
-  const handleAddNewUser = () => {
+  const handleAddNewUser = async () => {
+    setError(false)
+    setLoading(true)
     setDialogOpen(false)
-    addUser(phoneRef.current.value)
+    try {
+      await addUser(phoneRef.current.value)
+    } catch (e) {
+      setError(true)
+    }
+    setLoading(false)
   }
 
   const handleDialogOpen = () => {
@@ -69,10 +82,7 @@ export default function UsersList() {
   }
 
   const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return
-    }
-
+    if (reason === "clickaway") return
     setSnackbarOpen(false)
   }
 
@@ -95,12 +105,12 @@ export default function UsersList() {
         <Divider />
         <Grid item xs={12}>
           <List>
-            {usersState.users.map((e) => (
+            {users.map((e) => (
               <ListItem
                 button
                 key={e.phone}
                 value={e.phone}
-                selected={e.phone === selectUser}
+                selected={e === selectUser}
                 onClick={(event) => {
                   handleSelectUser(event, e)
                 }}
@@ -111,6 +121,14 @@ export default function UsersList() {
                 <ListItemText primary={e.name} />
               </ListItem>
             ))}
+            {loading && (
+              <ListItem>
+                <ListItemAvatar>
+                  <Skeleton variant="circle" width={40} height={40} />
+                </ListItemAvatar>
+                <ListItemText primary={<Skeleton variant="text" />} />
+              </ListItem>
+            )}
             <Divider />
             <ListItem button onClick={handleDialogOpen}>
               <ListItemIcon>
@@ -156,10 +174,22 @@ export default function UsersList() {
           vertical: "bottom",
           horizontal: "left",
         }}
-        open={snackbarOpen}
+        open={snackbarOpen || error}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={`${usersState.notFound} not found`}
+        message={error ? "Something went wrong" : `${notFound} not found`}
+        action={
+          <React.Fragment>
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleSnackbarClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </React.Fragment>
+        }
       />
     </div>
   )

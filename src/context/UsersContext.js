@@ -1,43 +1,29 @@
-import CreateContext from "./Context"
 import leafyIslandServerApi from "../api/leafyIslandServerApi"
+import { createContext, useContext, useState } from "react"
+import useLocalStorage from "../hooks/useLocalStorage"
 
-function usersReducer(state, { type, payload }) {
-  switch (type) {
-    case "ADD_USER": {
-      return { notFound: NaN, users: [...state.users, payload] }
-    }
-    case "USER_NOT_FOUND": {
-      return { notFound: payload, users: [...state.users] }
-    }
-  }
+const Context = createContext()
+
+export function useUsers() {
+  return useContext(Context)
 }
 
-function addUser(dispatch) {
-  return async (phone) => {
-    try {
-      let { data: user } = await leafyIslandServerApi({
-        method: "GET",
-        url: `/customer/wati/user/${phone}`,
-      })
-      if (!user) {
-        dispatch({
-          type: "USER_NOT_FOUND",
-          payload: phone,
-        })
-        return
-      }
-      dispatch({
-        type: "ADD_USER",
-        payload: user,
-      })
-    } catch (e) {
-      console.error(e)
-    }
-  }
-}
+export function Provider({ children }) {
+  const [users, setUsers] = useLocalStorage("users", [])
+  const [notFound, setNotfound] = useState(NaN)
 
-export const { Context, Provider } = CreateContext(
-  usersReducer,
-  { addUser },
-  { notFound: NaN, users: [] }
-)
+  async function addUser(phone) {
+    let { data: user } = await leafyIslandServerApi({
+      method: "GET",
+      url: `/customer/wati/user/${phone}`,
+    })
+    if (!user) {
+      setNotfound(phone)
+      return
+    }
+    setUsers((prevUsers) => [...prevUsers, user])
+  }
+
+  const value = { users, notFound, addUser }
+  return <Context.Provider value={value}>{children}</Context.Provider>
+}

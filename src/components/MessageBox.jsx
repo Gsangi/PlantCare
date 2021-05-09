@@ -37,7 +37,7 @@ export default function MessageBox({ message }) {
         elevation={0}
         className={clsx(classes.root, { [classes.userMsg]: message.sender !== "me" })}
       >
-        <Typography ma>{message.msg}</Typography>
+        <Typography>{message.msg}</Typography>
         <Grid
           item
           container
