@@ -24,31 +24,28 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MessageBox({ message }) {
   const classes = useStyles()
-  const [sent, setSent] = useState(message.sent)
+  const [sent, setSent] = useState(message.statusString === "SENT")
 
   setTimeout(() => {
     setSent(true)
-    message.markSent()
+    message.changeStatus("SENT")
   }, 2000)
 
   return (
-    <Grid item container justify={message.sender === "me" ? "flex-end" : "flex-start"}>
-      <Paper
-        elevation={0}
-        className={clsx(classes.root, { [classes.userMsg]: message.sender !== "me" })}
-      >
-        <Typography>{message.msg}</Typography>
+    <Grid item container justify={message.owner ? "flex-end" : "flex-start"}>
+      <Paper elevation={0} className={clsx(classes.root, { [classes.userMsg]: !message.owner })}>
+        <Typography>{message.text}</Typography>
         <Grid
           item
           container
           justify="flex-end"
-          direction={message.sender !== "me" ? "row-reverse" : "row"}
+          direction={!message.owner ? "row-reverse" : "row"}
           alignItems="center"
         >
           <Typography variant="caption" color="textSecondary">
-            {message.time.format("H:mm")}
+            {message.timestamp.format("H:mm")}
           </Typography>
-          {message.sender === "me" &&
+          {message.owner &&
             (!sent ? (
               <CircularProgress size={20} className={classes.marginL} />
             ) : (

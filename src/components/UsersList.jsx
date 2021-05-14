@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UsersList() {
   const classes = useStyles()
-  const { users, notFound, addUser } = useUsers()
+  const { users, notFound, alreadyPresentUser, addUser } = useUsers()
   const { user: selectUser, selectUser: setSelectUser } = useMessages()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
@@ -56,6 +56,10 @@ export default function UsersList() {
   useEffect(() => {
     setSnackbarOpen(!!notFound)
   }, [notFound])
+
+  useEffect(() => {
+    setSelectUser(users[alreadyPresentUser])
+  }, [alreadyPresentUser])
 
   const handleSelectUser = (e, user) => {
     setSelectUser(user)
@@ -68,6 +72,7 @@ export default function UsersList() {
     try {
       await addUser(phoneRef.current.value)
     } catch (e) {
+      console.log(e)
       setError(true)
     }
     setLoading(false)

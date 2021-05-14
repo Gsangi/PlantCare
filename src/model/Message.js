@@ -1,12 +1,17 @@
+import moment from "moment"
+
 export default class Message {
-  constructor(id, msg, time, sender, sent = false) {
+  constructor({ id, type, text, timestamp, owner, waId, senderName, statusString = "SENT" }) {
     this.id = id
-    this.msg = msg
-    this.time = time
-    this.sender = sender
-    this.sent = sent
-    this.markSent = () => {
-      this.sent = true
+    this.type = type
+    this.text = text
+    this.timestamp = moment.unix(timestamp)
+    this.owner = owner
+    this.waId = waId
+    this.senderName = senderName
+    this.statusString = statusString.toUpperCase()
+    this.changeStatus = (status) => {
+      this.statusString = status.toUpperCase()
     }
   }
 }
