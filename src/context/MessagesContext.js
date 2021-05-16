@@ -19,11 +19,14 @@ export function useMessages() {
 
 export const Provider = ({ children }) => {
   const [user, setUser] = useState(null)
+  const [orders, setOrders] = useState([])
   const [messages, setMessages] = useState([])
   const [pageNumber, setPageNumber] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [hasMore, setHasMore] = useState(false)
+  const [loadingOrders, setLoadingOrders] = useState(false)
+  const [errorOrders, setErrorOrders] = useState(false)
 
   useEffect(() => {
     setMessages([])
@@ -91,17 +94,39 @@ export const Provider = ({ children }) => {
     setMessages((prevMessages) => [...prevMessages, message])
   }
 
+  function getOrders(customerId) {
+    setLoadingOrders(true)
+    setErrorOrders(false)
+    if (!customerId) throw new Error("customerId is required")
+    leafyIslandServerApi({
+      method: "GET",
+      url: `/api/customer/order/${customerId}`,
+    })
+      .then(({ data }) => {
+        setOrders(data)
+      })
+      .catch((e) => {
+        setErrorOrders(true)
+        console.log(e)
+      })
+    setLoadingOrders(false)
+  }
+
   const value = {
     user,
+    orders,
+    loadingOrders,
+    errorOrders,
     messages,
+    pageNumber,
     loading,
     error,
-    pageNumber,
     hasMore,
     setUser,
     setPageNumber,
     sendMessage,
     getMessages,
+    getOrders,
   }
 
   return <Context.Provider value={value}>{children}</Context.Provider>

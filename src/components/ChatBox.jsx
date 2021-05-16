@@ -21,6 +21,7 @@ import MessageBox from "./MessageBox"
 import { useMessages } from "../context/MessagesContext"
 import MessageStatusBox from "./MessageStatusBox"
 import BroadcastMessageBox from "./BroadcastMessageBox"
+import { useUsers } from "../context/UsersContext"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,6 +84,7 @@ function ChatBox({ showInfo, onShowInfo, width }) {
     setPageNumber,
     sendMessage,
     getMessages,
+    getOrders,
   } = useMessages()
   const [inputText, setInputText] = useState("")
   let newMessageRef = useRef()
@@ -141,6 +143,11 @@ function ChatBox({ showInfo, onShowInfo, width }) {
     setPageNumber((prevState) => prevState + 1)
   }
 
+  const handleShowInfo = () => {
+    onShowInfo()
+    getOrders(user.customer_id)
+  }
+
   if (!user) return <div className={classes.root} />
 
   return (
@@ -151,21 +158,16 @@ function ChatBox({ showInfo, onShowInfo, width }) {
     >
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={onShowInfo}>
+          <IconButton edge="start" color="inherit" aria-label="menu" onClick={handleShowInfo}>
             <Avatar>{user.name[0]}</Avatar>
           </IconButton>
           <Typography variant="h6" className={classes.userName}>
             {user.name}
           </Typography>
-          <Tooltip title={"Load old chat"}>
-            <IconButton color="inherit" onClick={handleLoadOldChats}>
-              <GetAppIcon />
-            </IconButton>
-          </Tooltip>
         </Toolbar>
       </AppBar>
       <Paper elevation={0} square className={classes.chat} component={Grid} container>
-        <Grid item container direction="column-reverse" justify="flex-end" wrap="nowrap">
+        <Grid item container direction="column" justify="flex-end" wrap="nowrap">
           <div
             style={{ float: "left", clear: "both" }}
             ref={(el) => {

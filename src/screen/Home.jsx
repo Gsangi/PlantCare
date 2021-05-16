@@ -6,7 +6,7 @@ import MainNavigation from "../navigations/MainNavigation"
 import UsersList from "../components/UsersList"
 import UserInfo from "../components/UserInfo"
 
-const drawerWidth = 480
+const drawerWidth = "50vh"
 
 const useStyles = makeStyles((theme) => ({
   logo: {
@@ -35,13 +35,8 @@ function Home() {
         <Grid id="users-list" item xs={12} sm={3}>
           <UsersList />
         </Grid>
-        <Grid
-          id="chat-box"
-          item
-          xs={12}
-          sm={9}
-        >
-          <ChatBox onShowInfo={handleUserInfoOpen} showInfo={showUserInfo} width={drawerWidth}/>
+        <Grid id="chat-box" item xs={12} sm={9}>
+          <ChatBox onShowInfo={handleUserInfoOpen} showInfo={showUserInfo} width={drawerWidth} />
         </Grid>
         <UserInfo showDrawer={showUserInfo} onClose={handleUserInfoClose} width={drawerWidth} />
       </Grid>
