@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import moment from "moment"
+import clsx from "clsx"
 import Paper from "@material-ui/core/Paper"
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon"
 import Typography from "@material-ui/core/Typography"
@@ -9,17 +10,15 @@ import Toolbar from "@material-ui/core/Toolbar"
 import IconButton from "@material-ui/core/IconButton"
 import Grid from "@material-ui/core/Grid"
 import Divider from "@material-ui/core/Divider"
-import TextareaAutosize from "@material-ui/core/TextareaAutosize"
+import Avatar from "@material-ui/core/Avatar"
+import Tooltip from "@material-ui/core/Tooltip"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import { makeStyles } from "@material-ui/core/styles"
 import SendIcon from "@material-ui/icons/Send"
 import GetAppIcon from "@material-ui/icons/GetApp"
-import Avatar from "@material-ui/core/Avatar"
+import ReplayIcon from "@material-ui/icons/Replay"
 import MessageBox from "./MessageBox"
-import Message from "../model/Message"
 import { useMessages } from "../context/MessagesContext"
-import clsx from "clsx"
-import Button from "@material-ui/core/Button"
-import { Tooltip } from "@material-ui/core"
 import MessageStatusBox from "./MessageStatusBox"
 import BroadcastMessageBox from "./BroadcastMessageBox"
 
@@ -74,23 +73,56 @@ const useStyles = makeStyles((theme) => ({
 
 function ChatBox({ showInfo, onShowInfo, width }) {
   const classes = useStyles({ width })
-  const { user, messages, sendMessage, getMessages } = useMessages()
+  const {
+    user,
+    messages,
+    pageNumber,
+    loading,
+    error,
+    hasMore,
+    setPageNumber,
+    sendMessage,
+    getMessages,
+  } = useMessages()
   const [inputText, setInputText] = useState("")
   let newMessageRef = useRef()
+  let middleMessageRef = useRef()
+  let observer = useRef()
 
-  useEffect(() => {
-    if (newMessageRef && user) newMessageRef.scrollIntoView({ behavior: "auto" })
-  }, [messages])
+  /**
+   * OnHold for next update
+   * @type {(function(*))|*}
+   */
+  // useEffect(() => {
+  //   if (newMessageRef && user && pageNumber === 1)
+  //     newMessageRef.scrollIntoView({ behavior: "auto" })
+  //   // if (middleMessageRef && user && pageNumber !== 1)
+  //   //   middleMessageRef.scrollIntoView({ behavior: "auto" })
+  // }, [messages])
 
-  const lastMessageRef = useCallback((node) => {})
+  let lastMessageRef = useCallback(
+    (node) => {
+      if (loading) return
+      if (observer.current) {
+        observer.current.disconnect()
+      }
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevValue) => prevValue + 1)
+        }
+      })
+      if (node) observer.current.observe(node)
+    },
+    [loading, hasMore]
+  )
 
   const handleSendMessage = (event) => {
     event.preventDefault()
     if (!inputText) return
     const date = moment()
-    let msg = new Message(0, "text", inputText, date, true, user.phone.toString(), null, "LOADING")
-    setInputText("")
-    sendMessage(msg)
+    // let msg = new Message({0, "text", inputText, date, true, user.phone.toString(), null, "LOADING"})
+    // setInputText("")
+    // sendMessage(msg)
   }
 
   const handleOpenEmoticons = () => {
@@ -99,7 +131,14 @@ function ChatBox({ showInfo, onShowInfo, width }) {
   }
 
   const handleLoadOldChats = () => {
-    getMessages(user.phone, 1)
+    getMessages(user.phone, pageNumber)
+    setPageNumber((prevState) => prevState + 1)
+  }
+
+  const handleLoadMoreChats = () => {
+    console.log(pageNumber)
+    getMessages(user.phone, pageNumber)
+    setPageNumber((prevState) => prevState + 1)
   }
 
   if (!user) return <div className={classes.root} />
@@ -126,26 +165,49 @@ function ChatBox({ showInfo, onShowInfo, width }) {
         </Toolbar>
       </AppBar>
       <Paper elevation={0} square className={classes.chat} component={Grid} container>
-        <Grid item container direction="column" justify="flex-end" wrap="nowrap">
-          {messages.map((message, index) => {
-            if (message.type === undefined) {
-              return <BroadcastMessageBox broadcastMessage={message} key={index} />
-            }
-            if (typeof message.type !== "string") {
-              return <MessageStatusBox chatStatus={message} key={index} />
-            }
-            if (messages.length === index - 1) {
-              return <MessageBox ref={lastMessageRef} key={index} message={message} />
-            } else {
-              return <MessageBox key={index} message={message} />
-            }
-          })}
+        <Grid item container direction="column-reverse" justify="flex-end" wrap="nowrap">
           <div
             style={{ float: "left", clear: "both" }}
             ref={(el) => {
               newMessageRef = el
             }}
           />
+          {messages.map((message, index) => {
+            let bool = index === messages.length - 1
+            if (message.type === undefined) {
+              return (
+                <BroadcastMessageBox
+                  ref={bool ? lastMessageRef : undefined}
+                  broadcastMessage={message}
+                  key={index}
+                />
+              )
+            }
+            if (typeof message.type !== "string") {
+              return (
+                <MessageStatusBox
+                  ref={bool ? lastMessageRef : undefined}
+                  chatStatus={message}
+                  key={index}
+                />
+              )
+            }
+            return (
+              <MessageBox ref={bool ? lastMessageRef : undefined} key={index} message={message} />
+            )
+          })}
+          {loading && (
+            <Grid item container justify="center" alignItems="center">
+              <CircularProgress size={25} />
+            </Grid>
+          )}
+          {error && (
+            <Grid item container justify="center" alignItems="center">
+              <IconButton>
+                <ReplayIcon />
+              </IconButton>
+            </Grid>
+          )}
         </Grid>
       </Paper>
       <Paper variant="outlined" component="form" className={classes.sendMessageBox}>

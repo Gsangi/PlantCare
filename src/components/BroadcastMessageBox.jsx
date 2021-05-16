@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-export default function BroadcastMessageBox({ broadcastMessage }) {
+const BroadcastMessageBox = React.forwardRef(({ broadcastMessage }, ref) => {
   const classes = useStyles()
 
   return (
-    <Grid item container justify="center" alignItems="center" className={classes.root}>
+    <Grid item container justify="center" alignItems="center" className={classes.root} ref={ref}>
       <Card elevation={0} className={classes.card}>
         <CardContent>
           <Typography className={classes.title} color="textSecondary">
@@ -39,4 +39,6 @@ export default function BroadcastMessageBox({ broadcastMessage }) {
       </Card>
     </Grid>
   )
-}
+})
+
+export default BroadcastMessageBox

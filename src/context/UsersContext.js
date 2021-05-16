@@ -22,7 +22,7 @@ export function Provider({ children }) {
         }
     let { data: user } = await leafyIslandServerApi({
       method: "GET",
-      url: `/customer/wati/user/${phone}`,
+      url: `/api/customer/${phone}`,
     })
     if (!user) {
       setNotfound(phone)

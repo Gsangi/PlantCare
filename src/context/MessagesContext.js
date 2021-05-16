@@ -5,7 +5,11 @@ import leafyIslandServerApi from "../api/leafyIslandServerApi"
 import Message from "../model/Message"
 import BroadcastMessage from "../model/BroadcastMessage"
 
-const socket = io(process.env.REACT_APP_LEAFY_ISLAND_SERVER_BASE_URL)
+const socket = io("http://localhost:5000")
+
+socket.on("connect", () => {
+  console.log("Connected to socket.io server instance id:", socket.id)
+})
 
 const Context = createContext()
 
@@ -16,6 +20,29 @@ export function useMessages() {
 export const Provider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [messages, setMessages] = useState([])
+  const [pageNumber, setPageNumber] = useState(1)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+
+  useEffect(() => {
+    setMessages([])
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    setLoading(true)
+    setError(false)
+    getMessages(user.phone, pageNumber)
+      .then((arr) => {
+        setMessages((prevState) => [...prevState, ...arr])
+        setHasMore(arr.length > 0)
+        setLoading(false)
+      })
+      .catch((e) => {
+        setError(true)
+      })
+  }, [user, pageNumber])
 
   useEffect(() => {
     const setMsg = (message) => {
@@ -40,37 +67,42 @@ export const Provider = ({ children }) => {
       },
     } = await leafyIslandServerApi({
       method: "GET",
-      url: `/wati/messages/${phone}`,
+      url: `/api/wati/message/${phone}`,
       params: {
         pageSize,
         pageNumber,
       },
     })
     let allMessagesArray = []
-    for (let i = 99; i >= 0; i--) {
+    for (let item of items) {
       try {
         let msg
-        console.log(typeof items[i].type)
-        if (typeof items[i].type !== "string") msg = new BroadcastMessage(items[i])
-        else msg = new Message(items[i])
+        if (typeof item.type !== "string") msg = new BroadcastMessage(item)
+        else msg = new Message(item)
         allMessagesArray.push(msg)
       } catch (e) {
         console.log(e)
       }
     }
-    setMessages([...messages, ...allMessagesArray])
+    return allMessagesArray
   }
 
   const sendMessage = (message) => {
     setMessages((prevMessages) => [...prevMessages, message])
   }
 
-  const selectUser = (user) => {
-    setUser(user)
-    setMessages([])
+  const value = {
+    user,
+    messages,
+    loading,
+    error,
+    pageNumber,
+    hasMore,
+    setUser,
+    setPageNumber,
+    sendMessage,
+    getMessages,
   }
-
-  const value = { user, messages, selectUser, sendMessage, getMessages }
 
   return <Context.Provider value={value}>{children}</Context.Provider>
 }

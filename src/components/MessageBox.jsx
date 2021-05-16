@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     padding: theme.spacing(1),
     margin: theme.spacing(1),
-    maxWidth: "85%",
+    maxWidth: "65%",
   },
   userMsg: {
     backgroundColor: "#FCEF87",
@@ -20,9 +20,13 @@ const useStyles = makeStyles((theme) => ({
   marginL: {
     marginLeft: theme.spacing(2),
   },
+  messageText: {
+    whiteSpace: "pre-wrap",
+    overflowWrap: "anywhere",
+  },
 }))
 
-export default function MessageBox({ message }) {
+const MessageBox = React.forwardRef(({ message }, ref) => {
   const classes = useStyles()
   const [sent, setSent] = useState(message.statusString === "SENT")
 
@@ -32,9 +36,9 @@ export default function MessageBox({ message }) {
   }, 2000)
 
   return (
-    <Grid item container justify={message.owner ? "flex-end" : "flex-start"}>
+    <Grid item container justify={message.owner ? "flex-end" : "flex-start"} ref={ref}>
       <Paper elevation={0} className={clsx(classes.root, { [classes.userMsg]: !message.owner })}>
-        <Typography>{message.text}</Typography>
+        <Typography className={classes.messageText}>{message.text}</Typography>
         <Grid
           item
           container
@@ -55,4 +59,6 @@ export default function MessageBox({ message }) {
       </Paper>
     </Grid>
   )
-}
+})
+
+export default MessageBox

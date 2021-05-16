@@ -10,15 +10,15 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0),
   },
   card: {
-    backgroundColor: "#ecfeff"
-  }
+    backgroundColor: "#ecfeff",
+  },
 }))
 
-export default function MessageStatusBox({ chatStatus }) {
+const MessageStatusBox = React.forwardRef(({ chatStatus }, ref) => {
   const classes = useStyles()
 
   return (
-    <Grid item container justify="center" alignItems="center" className={classes.root}>
+    <Grid item container justify="center" alignItems="center" className={classes.root} ref={ref}>
       <Card elevation={0} className={classes.card}>
         <CardContent>
           <Typography>{chatStatus.eventDescription}</Typography>
@@ -27,4 +27,6 @@ export default function MessageStatusBox({ chatStatus }) {
       </Card>
     </Grid>
   )
-}
+})
+
+export default MessageStatusBox
